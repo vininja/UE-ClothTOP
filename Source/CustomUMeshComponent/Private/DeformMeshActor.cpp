@@ -23,7 +23,7 @@ ADeformMeshActor::ADeformMeshActor()
 	TouchEngineComponent = CreateDefaultSubobject<UTouchEngineComponentBase>("TouchEngine Component");
 
 	// Defaults 
-	TouchEngineComponent->ToxFilePath = "Toxes/clt_cloak.tox";
+	TouchEngineComponent->ToxFilePath = "ToxLibrary/clt_cloak.tox";
 	TouchEngineComponent->LoadOnBeginPlay = 1;
 	//TouchEngineComponent->CookMode = ETouchEngineCookMode::Synchronized;
 }
@@ -34,6 +34,7 @@ void ADeformMeshActor::BeginPlay()
 	Super::BeginPlay();
 
 	TouchEngineComponent->StartTouchEngine();
+
 	while (TouchEngineComponent->IsLoaded() == false);
 	while (TouchEngineComponent->IsRunning() == false);
 
@@ -41,20 +42,12 @@ void ADeformMeshActor::BeginPlay()
 	//DeformMeshComp->SetMeshSectionVisible(0, true);
 }
 
-void ADeformMeshActor::RepeatingFunction()
-{
-	FTouchVar<bool> reset;
-	reset.Data = false;
-	TouchEngineComponent->EngineInfo->SetBooleanInput("pn/Reset", reset);
-}
-
 // Called every frame
 void ADeformMeshActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	DeformMeshComp->UpdateMeshSectionTransform(0, TouchEngineComponent,Controller->GetTransform());
+	DeformMeshComp->UpdateMeshSectionTransform(0, Controller->GetTransform());
 	DeformMeshComp->FinishTransformsUpdate();//We finalize all the deform transforms updates, in our case, just one
-
 }
 

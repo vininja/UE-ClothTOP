@@ -402,7 +402,6 @@ public:
 			Sections[SectionIndex] != nullptr)
 		{
 			DeformTransforms[SectionIndex] = Transform;
-			//Sections[SectionIndex]->VertexFactory.SetPosTexture(posTex);
 			//Mark as dirty
 			bDeformTransformsDirty = true;
 		}
@@ -671,7 +670,6 @@ void UDeformMeshComponent::CreateMeshSection(int32 SectionIndex, UStaticMesh* Cl
 	NewSection.StaticMesh->CalculateExtendedBounds();
 	NewSection.SectionLocalBox += NewSection.StaticMesh->GetBoundingBox();
 
-	//if (posTexIn != nullptr) NewSection.PositionTexture = posTexIn;
 	if (TouchEngineComponent != nullptr) NewSection.TouchEngineComponent = TouchEngineComponent;
 
 	//Add this sections' material to the list of the component's materials, with the same index as the section
@@ -687,7 +685,7 @@ void UDeformMeshComponent::CreateMeshSection(int32 SectionIndex, UStaticMesh* Cl
 /// </summary>
 /// <param name="SectionIndex"> The index for the section that we want to update its DeformTransform </param>
 /// <param name="Transform"> The new Transform Matrix </param>
-void UDeformMeshComponent::UpdateMeshSectionTransform(int32 SectionIndex, UTouchEngineComponentBase* TouchEngineComponent, const FTransform& Transform)
+void UDeformMeshComponent::UpdateMeshSectionTransform(int32 SectionIndex, const FTransform& Transform)
 {
 	if (SectionIndex < DeformMeshSections.Num())
 	{
@@ -707,7 +705,6 @@ void UDeformMeshComponent::UpdateMeshSectionTransform(int32 SectionIndex, UTouch
 					DeformMeshSceneProxy->UpdateDeformTransform_RenderThread( SectionIndex, TransformMatrix);
 				});
 		}
-
 
 		UpdateLocalBounds();		 // Update overall bounds
 		MarkRenderTransformDirty();  // Need to send new bounds to render thread

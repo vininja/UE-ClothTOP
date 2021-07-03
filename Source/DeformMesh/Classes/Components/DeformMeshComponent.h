@@ -73,7 +73,7 @@ public:
 	
 	void CreateMeshSection(int32 SectionIndex, UStaticMesh* ClothMesh, UTouchEngineComponentBase* TouchEngineComponent, const FTransform& DeformTransform);
 
-	void UpdateMeshSectionTransform(int32 SectionIndex, UTouchEngineComponentBase* TouchEngineComponent, const FTransform& Transform);
+	void UpdateMeshSectionTransform(int32 SectionIndex, const FTransform& Transform);
 
 	void FinishTransformsUpdate();
 

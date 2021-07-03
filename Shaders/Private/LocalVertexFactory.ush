@@ -715,24 +715,20 @@ float4 TransformDeformToTranslatedWorldNormal(float3 LocalPosition)
 //Transform from deform to world space
 float4 TransformTouchDesignerToWorld(float4 LocalPosition)
 {
-	//float4x4 DeformTransform = DMTransforms[DMTransformIndex];
 	float4x4 DeformTransform;
 	DeformTransform[0] = float4(1, 0, 0, 0);
 	DeformTransform[1] = float4(0, 0,-1, 0);
 	DeformTransform[2] = float4(0,-1, 0, 0);
 	DeformTransform[3] = float4(0, 0, 0, 1);
      
-	//float3 RotatedPosition = DeformTransform[0].xyz * LocalPosition.xxx + DeformTransform[1].xyz * LocalPosition.yyy + DeformTransform[2].xyz * LocalPosition.zzz;
 	float3 RotatedPosition = mul(LocalPosition, DeformTransform);
 
 	float3 PreViewTranslation = ResolvedView.PreViewTranslation.xyz;
-	//float3 RotatedPreViewPosition = DeformTransform[0].xyz * PreViewTranslation.xxx + DeformTransform[1].xyz * PreViewTranslation.yyy + DeformTransform[2].xyz * PreViewTranslation.zzz;
-	//float3 RotatedPreViewPosition = mul(float4(PreViewTranslation.xyz,1), DeformTransform).xyz;
 
 	return float4(RotatedPosition + (DeformTransform[3].xyz ),1);
-
 }
 #endif
+
 #if USE_INSTANCING
 float4 CalcWorldPosition(float4 Position, float4x4 InstanceTransform, uint PrimitiveId)
 #elif DEFORM_MESH
@@ -744,23 +740,9 @@ float4 CalcWorldPosition(float4 Position, uint PrimitiveId)
 #if USE_INSTANCING
 	return TransformLocalToTranslatedWorld(mul(Position, InstanceTransform).xyz, PrimitiveId);
 #elif DEFORM_MESH
-	
-	float4 tdWorldPos = posTEX[uint2(uint(UV.x*1024.),uint((UV.y)*1024.))];
-	
-	float3 localPos = TransformDeformToTranslatedWorld(tdWorldPos.xyz);
-	
+	float3 localPos = TransformDeformToTranslatedWorld(posTEX[uint2(UV*1024.)].xyz);
 	return float4(localPos, 1);
-	//return TransformLocalToTranslatedWorld(Position.xyz);
 #elif USE_SPLINEDEFORM
-/*
-	// Make transform for this point along spline
-	float4x3 SliceTransform = CalcSliceTransform(dot(Position.xyz, SplineMeshDir));
-
-	// Transform into mesh space
-	float4 LocalPos = float4(mul(Position, SliceTransform), Position.w);
-	// Transform from mesh to world space
-	return TransformLocalToTranslatedWorld(LocalPos.xyz);
-	*/
 	return INVARIANT(TransformLocalToTranslatedWorld(float3(mul(Position, CalcSliceTransform(dot(Position.xyz, SplineMeshDir))).xyz), PrimitiveId));
 #else
 	return TransformLocalToTranslatedWorld(Position.xyz, PrimitiveId);
@@ -809,26 +791,9 @@ half3x3 CalcTangentToLocal(FVertexFactoryInput Input, out float TangentSign)
 	Result[1] = TangentY;
 	Result[2] = TangentZ.xyz;
 #else
-	//#if MANUAL_VERTEX_FETCH
-	//	half3 TangentInputX = LocalVF.VertexFetch_PackedTangentsBuffer[2 * (LocalVF.VertexFetch_Parameters[VF_VertexOffset] + Input.VertexId) + 0].xyz;
-	//	half4 TangentInputZ = LocalVF.VertexFetch_PackedTangentsBuffer[2 * (LocalVF.VertexFetch_Parameters[VF_VertexOffset] + Input.VertexId) + 1].xyzw;
-	//#else
-	//	half3 TangentInputX = Input.TangentX;
-	//	half4 TangentInputZ = Input.TangentZ;
-	//#endif
-
-	//#ifdef GPUSKIN_PASS_THROUGH
-	//	half3 TangentX = TangentInputX;
-	//	half4 TangentZ = TangentInputZ;
-	//#else
-	//	half3 TangentX = TangentBias(TangentInputX);
-	//	half4 TangentZ = TangentBias(TangentInputZ);
-	//#endif
-
-	//TangentSign = TangentZ.w;
 	TangentSign = 0.;
 
-	half3 worldNormal = half3(TransformDeformToTranslatedWorldNormal(normTEX[uint2(uint(Input.TexCoords[0].x*1024.),uint((Input.TexCoords[0].y)*1024.))].xyz).xyz);
+	half3 worldNormal = half3(TransformDeformToTranslatedWorldNormal(normTEX[uint2(Input.TexCoords[0]*1024.)].xyz).xyz);
 
 	//half3 TangentY = cross(worldNormal, TangentX) * TangentZ.w;
 	//Result[0] = cross(TangentY, worldNormal) * TangentZ.w;

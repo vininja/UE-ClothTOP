@@ -50,6 +50,10 @@
 		{
 			"Name": "TouchEngine",
 			"Enabled": true
+		},
+		{
+			"Name": "NDIIOPlugin",
+			"Enabled": true
 		}
 	]
 }
