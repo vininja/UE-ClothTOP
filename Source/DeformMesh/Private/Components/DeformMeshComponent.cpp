@@ -294,7 +294,7 @@ public:
 
 				//Get the needed data from the static mesh of the mesh section
 				//We're assuming that there's only one LOD
-				auto& LODResource = SrcSection.StaticMesh->RenderData->LODResources[0];
+				auto& LODResource = SrcSection.StaticMesh->GetRenderData()->LODResources[0];
 
 				FDeformMeshVertexFactory* VertexFactory= &NewSection->VertexFactory;
 				//Initialize the vertex factory with the vertex data from the static mesh using the helper function defined above
@@ -667,13 +667,17 @@ void UDeformMeshComponent::CreateMeshSection(int32 SectionIndex, UStaticMesh* Cl
 
 	//Update the local bound using the bounds of the static mesh that we're adding
 	//I'm not taking in consideration the deformation here, if the deformation cause the mesh to go outside its bounds
-	NewSection.StaticMesh->CalculateExtendedBounds();
-	NewSection.SectionLocalBox += NewSection.StaticMesh->GetBoundingBox();
+    if (NewSection.StaticMesh != nullptr)
+    {
+        NewSection.StaticMesh->CalculateExtendedBounds();
+        NewSection.SectionLocalBox += NewSection.StaticMesh->GetBoundingBox();
+    
 
-	if (TouchEngineComponent != nullptr) NewSection.TouchEngineComponent = TouchEngineComponent;
+	    if (TouchEngineComponent != nullptr) NewSection.TouchEngineComponent = TouchEngineComponent;
 
-	//Add this sections' material to the list of the component's materials, with the same index as the section
-	SetMaterial(SectionIndex, NewSection.StaticMesh->GetMaterial(0));
+	    //Add this sections' material to the list of the component's materials, with the same index as the section
+	    SetMaterial(SectionIndex, NewSection.StaticMesh->GetMaterial(0));
+    }
 
 	UpdateLocalBounds(); // Update overall bounds
 	MarkRenderStateDirty(); // New section requires recreating scene proxy

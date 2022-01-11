@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "4.26",
+	"EngineAssociation": "4.27",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -21,7 +21,12 @@
 	"Plugins": [
 		{
 			"Name": "USDImporter",
-			"Enabled": true
+			"Enabled": true,
+			"SupportedTargetPlatforms": [
+				"Win64",
+				"Mac",
+				"Linux"
+			]
 		},
 		{
 			"Name": "StaticMeshEditorExtension",
@@ -32,27 +37,7 @@
 			"Enabled": true
 		},
 		{
-			"Name": "OSC",
-			"Enabled": true
-		},
-		{
-			"Name": "AlembicHairImporter",
-			"Enabled": true
-		},
-		{
-			"Name": "HairStrands",
-			"Enabled": true
-		},
-		{
-			"Name": "ControlRig",
-			"Enabled": true
-		},
-		{
 			"Name": "TouchEngine",
-			"Enabled": true
-		},
-		{
-			"Name": "NDIIOPlugin",
 			"Enabled": true
 		}
 	]
